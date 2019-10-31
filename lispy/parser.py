@@ -5,8 +5,11 @@ from .runtime import Symbol
 
 
 class LispTransformer(InlineTransformer):
-    def start(self, *args): 
-        return [Symbol.BEGIN, *args]
+    number = float
+    name = str
+    def binop(self, op, left, right): 
+        op = str(op)
+        return (op, left, right)
 
 def parse(src: str):
     """

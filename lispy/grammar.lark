@@ -1,7 +1,15 @@
-?start : value+
+?start : atom+
 
-?value : SYMBOL
- 
+?value : SYMBOL 
+			 | STRING 
+			 | INT	->number 
+			 | FLOAT -> number
+
+?atom	 : "(" atom+ ")"
+			 | expr
+
+?expr  : SYMBOL expr expr -> binop
+			 | value
 
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^&~<>?|\\\w=]+/

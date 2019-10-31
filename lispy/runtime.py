@@ -6,7 +6,7 @@ from types import MappingProxyType
 from .symbol import Symbol
 
 
-def eval(x, env=None):
+def eval(x, env):
     """
     Avalia expressão no ambiente de execução dado.
     """
@@ -17,16 +17,40 @@ def eval(x, env=None):
     
     # Avalia tipos atômicos
     if isinstance(x, Symbol):
-        return NotImplemented
+        return env[x]
     elif isinstance(x, (int, float, bool, str)):
-        return NotImplemented
+        return x
 
     # Avalia formas especiais e listas
     head, *args = x
+
+    # Comando (+ <expression> <expression>)
+    # Ex: (+ 2 2)
+    if head == '+':
+        x,y = args
+        return eval(x, env) + eval(y, env)
     
+    # Comando (- <expression> <expression>)
+    # Ex: (- 2 2)
+    elif head == '-':
+        x,y = args
+        return eval(x, env) - eval(y, env)
+    
+    # Comando (* <expression> <expression>)
+    # Ex: (* 2 2)
+    elif head == '*':
+        x,y = args
+        return eval(x, env) * eval(y, env)
+
+    # Comando (/ <expression> <expression>)
+    # Ex: (/ 2 2)
+    elif head == '/':
+        x,y = args
+        return eval(x, env) / eval(y, env)
+
     # Comando (if <test> <then> <other>)
     # Ex: (if (even? x) (quotient x 2) x)
-    if head == Symbol.IF:
+    elif head == Symbol.IF:
         return NotImplemented
 
     # Comando (define <symbol> <expression>)
