@@ -1,21 +1,26 @@
-?start : atom+
+?start : expr+
 
 ?value : SYMBOL 
 			 | STRING 
-			 | INT	->number 
-			 | FLOAT -> number
+       | LITERAL
 
-?atom	 : "(" atom+ ")"
-			 | expr
+?atom	 : value
+       | number
 
-?expr  : SYMBOL expr expr -> binop
-			 | value
+number : INT
+       | FLOAT
+
+?list  : "[" expr (","expr)* "]"
+
+?expr  : atom
+			 | list
 
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^&~<>?|\\\w=]+/
 STRING    : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
 INT.1     : /-?\d+/
 FLOAT.2   : /-?\d+\.\d+/
+LITERAL   : /#[a-zA-Z]/
 
 %ignore /\s+/
 %ignore /;[^\n]*/

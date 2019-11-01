@@ -26,37 +26,41 @@ def eval(x, env):
 
     # Comando (+ <expression> <expression>)
     # Ex: (+ 2 2)
-    if head == '+':
+    if head == Symbol.ADD:
         x,y = args
         return eval(x, env) + eval(y, env)
     
     # Comando (- <expression> <expression>)
     # Ex: (- 2 2)
-    elif head == '-':
+    elif head == Symbol.SUB:
         x,y = args
         return eval(x, env) - eval(y, env)
     
     # Comando (* <expression> <expression>)
     # Ex: (* 2 2)
-    elif head == '*':
+    elif head == Symbol.MUL:
         x,y = args
         return eval(x, env) * eval(y, env)
 
     # Comando (/ <expression> <expression>)
     # Ex: (/ 2 2)
-    elif head == '/':
+    elif head == Symbol.DIV:
         x,y = args
         return eval(x, env) / eval(y, env)
 
     # Comando (if <test> <then> <other>)
     # Ex: (if (even? x) (quotient x 2) x)
     elif head == Symbol.IF:
-        return NotImplemented
+        (_, test, then, alt) = x
+        exp = (then if eval(test, env) else alt)
+        return eval(exp, env)
 
     # Comando (define <symbol> <expression>)
     # Ex: (define x (+ 40 2))
     elif head == Symbol.DEFINE:
-        return NotImplemented
+        (_, symbol, exp) = x
+        env[symbol] = result = eval(exp, env)
+        return result
 
     # Comando (quote <expression>)
     # (quote (1 2 3))
@@ -76,7 +80,9 @@ def eval(x, env):
     # Lista/chamada de funções
     # (sqrt 4)
     else:
-       return NotImplemented
+        proc = eval(head, env)
+        args = (eval(arg, env) for arg in x[1:])
+        return proc(*args)
 
 
 #

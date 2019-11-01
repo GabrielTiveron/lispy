@@ -15,8 +15,29 @@ def parse(src: str):
     """
     Compila string de entrada e retorna a S-expression equivalente.
     """
-    return parser.parse(src)
+    return read_from_tokens(src.replace('(', ' ( ').replace(')', ' ) ').split())
 
+def read_from_tokens(tokens: list):
+
+    if len(tokens) == 0:
+        raise SyntaxError('Empty tokens')
+    token = tokens.pop(0)
+    if token == '(':
+        L = []
+        while tokens[0] != ')':
+            L.append(read_from_tokens(tokens))
+        tokens.pop(0) # pop off ')'
+        return L
+    elif token == ')':
+        raise SyntaxError('unexpected )')
+    else:
+        try: 
+            return int(token)
+        except ValueError:
+            try: 
+                return float(token)
+            except ValueError:
+                return Symbol(token)
 
 def _make_grammar():
     """
