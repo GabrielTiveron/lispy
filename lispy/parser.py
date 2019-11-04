@@ -5,39 +5,27 @@ from .runtime import Symbol
 
 
 class LispTransformer(InlineTransformer):
+
     number = float
-    name = str
+    string = str
+
     def binop(self, op, left, right): 
         op = str(op)
-        return (op, left, right)
+        return list((op, left, right))
+
+    def bool(self, term):
+        return term == '#t'
+
+    def symbol(self, symbol):
+        return str(symbol)
+
 
 def parse(src: str):
     """
     Compila string de entrada e retorna a S-expression equivalente.
     """
-    return read_from_tokens(src.replace('(', ' ( ').replace(')', ' ) ').split())
+    return parser.parse(src)
 
-def read_from_tokens(tokens: list):
-
-    if len(tokens) == 0:
-        raise SyntaxError('Empty tokens')
-    token = tokens.pop(0)
-    if token == '(':
-        L = []
-        while tokens[0] != ')':
-            L.append(read_from_tokens(tokens))
-        tokens.pop(0) # pop off ')'
-        return L
-    elif token == ')':
-        raise SyntaxError('unexpected )')
-    else:
-        try: 
-            return int(token)
-        except ValueError:
-            try: 
-                return float(token)
-            except ValueError:
-                return Symbol(token)
 
 def _make_grammar():
     """
