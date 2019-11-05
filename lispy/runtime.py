@@ -60,7 +60,6 @@ def eval(x, env):
     elif head == Symbol.DEFINE:
         (_, symbol, exp) = x
         env[symbol] = result = eval(exp, env)
-        return result
 
     # Comando (quote <expression>)
     # (quote (1 2 3))
