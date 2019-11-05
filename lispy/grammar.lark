@@ -1,7 +1,7 @@
-?start : expr+
+?start : expr
 
-?value : SYMBOL -> symbol 
-			 | STRING -> string 
+?value : SYMBOL -> symbol
+			 | STRING ->string
        | BOOL -> bool
 
 ?atom	 : value
@@ -11,15 +11,18 @@
 number : INT
        | FLOAT
 
-?list  : "[" expr (","expr)* "]"
+?term  : atom
+       | list
 
-?expr  : atom
-			 | list
+?list  : term term+
+       | "(" expr+ ")"->list
+
+?expr  : term
        | "(" expr ")"
 
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^&~<>?|\\\w=]+/
-STRING    : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
+STRING.4    : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
 INT.1     : /-?\d+/
 FLOAT.2   : /-?\d+\.\d+/
 BOOL.3	    : /#[tf]/
