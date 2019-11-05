@@ -6,19 +6,17 @@
 
 ?atom	 : value
        | number
-			 | SYMBOL atom atom ->binop
+
+binop  : SYMBOL atom atom
 
 number : INT
        | FLOAT
 
-?term  : atom
+?list  : atom
+       | "(" list* ")"->list
+
+?expr  : binop
        | list
-
-?list  : term term+
-       | "(" expr+ ")"->list
-
-?expr  : term
-       | "(" expr ")"
 
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^&~<>?|\\\w=]+/

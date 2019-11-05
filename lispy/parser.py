@@ -7,17 +7,29 @@ from .runtime import Symbol
 class LispTransformer(InlineTransformer):
 
     number = float
-    string = str
+    name   = str
+
 
     def binop(self, op, left, right): 
-        op = str(op)
-        return list((op, left, right))
+        op = Symbol(op)
+        return list(tuple((op, left, right)))
 
     def bool(self, term):
         return term == '#t'
 
+    def string(self, string):
+        string = string.replace('\\n', '\n')
+        string = string.replace('\\t', '\t')
+        string = string.replace('\\"', '\"')
+        return string[1:-1]
+
+    def list(self, *args):
+        return list(args)
+       
+
     def symbol(self, symbol):
-        return str(symbol)
+        return Symbol(symbol)
+
 
 
 def parse(src: str):
