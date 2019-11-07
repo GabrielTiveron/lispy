@@ -73,15 +73,15 @@ def eval(x, env):
         print('ARGS: ', args)
         x, y = args
         print('X: ', x, 'Y: ', y)
-        dfn = []
-        if len(x) > 1:
-            for elem in x:
-              for e in elem:
-                dfn.append(e)
-              eval([Symbol.DEFINE, elem], env)
+        dn = {}
+        if any(isinstance(i, list) for i in x):
+            for i in x:
+                eval([Symbol.DEFINE] + i, dn)
         else:
-            eval([Symbol.DEFINE, x], env)
-        return eval(y, env)
+            if x[0] not in env:
+                eval([Symbol.DEFINE]+ x, dn)
+        env = ChainMap(env, dn)
+        return eval(y, dn)
 
 
     # Comando (lambda <vars> <body>)
