@@ -58,6 +58,7 @@ def eval(x, env):
     # Comando (define <symbol> <expression>)
     # Ex: (define x (+ 40 2))
     elif head == Symbol.DEFINE:
+        print('DEFINE: ', x)
         (_, symbol, exp) = x
         env[symbol] = result = eval(exp, env)
 
@@ -69,7 +70,19 @@ def eval(x, env):
     # Comando (let <expression> <expression>)
     # (let ((x 1) (y 2)) (+ x y))
     elif head == Symbol.LET:
-        return NotImplemented
+        print('ARGS: ', args)
+        x, y = args
+        print('X: ', x, 'Y: ', y)
+        dfn = []
+        if len(x) > 1:
+            for elem in x:
+              for e in elem:
+                dfn.append(e)
+              eval([Symbol.DEFINE, elem], env)
+        else:
+            eval([Symbol.DEFINE, x], env)
+        return eval(y, env)
+
 
     # Comando (lambda <vars> <body>)
     # (lambda (x) (+ x 1))

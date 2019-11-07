@@ -26,9 +26,17 @@ class LispTransformer(InlineTransformer):
     def list(self, *args):
         return list(args)
        
+    def letop(self, letop):
+        print('LETOP: ', letop)
+        return letop
 
     def symbol(self, symbol):
+        print('$$$$$$$ ', symbol)
         return Symbol(symbol)
+
+    def let(self, defines, ops):
+        print('%%%%%%% ', defines, ops)
+        return list(tuple((Symbol.LET, defines, ops)))
 
 
 
