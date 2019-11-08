@@ -19,6 +19,7 @@ number : INT
 ?expr  : binop
        | list
        | "let""(" expr expr ")" -> let
+       | "lambda""(" expr expr ")" -> lambdas
 
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^&~<>?|\\\w=]+/
