@@ -30,9 +30,13 @@ number : INT
 ?expr  : binop
        | list
        | "let""(" expr expr ")" -> let
-       | ":""let""{" assign+ "}" "in" "(" expr ")" -> let_alt
+       | ":let""{" assign+ "}" "in" "(" expr ")" -> let_alt
        | "lambda""(" expr expr ")" -> lambdas
 			 | ("'"expr | "quote""(" expr ")") -> quote
+       | lambda_alt
+
+?lambda_alt : ":defn" SYMBOL SYMBOL+ ":" "(" expr ")" -> lambda_alt
+            | ":fn" SYMBOL+ ":" "(" expr ")" -> lambda_alt2
 
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^&~<>?|\\\w=]+/
@@ -43,3 +47,4 @@ BOOL.3	    : /#[tf]/
 
 %ignore /\s+/
 %ignore /;[^\n]*/
+%ignore /[\n]+/

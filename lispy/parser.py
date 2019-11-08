@@ -24,6 +24,14 @@ class LispTransformer(InlineTransformer):
         *defines, ops = args
         return list(tuple((Symbol.LET, defines, ops)))
 
+    def lambda_alt(self, *args):
+        name, *params, op = args
+        return list(tuple((Symbol.DEFINE, Symbol(name), list(tuple((Symbol.LAMBDA, params, op))))))
+
+    def lambda_alt2(self, *args):
+        *params, ops = args;
+        return list(tuple((Symbol.LAMBDA, params, ops)))
+
     def assign(self, value, expr):
         return list(tuple((value, expr)))
 
