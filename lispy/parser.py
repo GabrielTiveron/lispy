@@ -10,7 +10,7 @@ class LispTransformer(InlineTransformer):
     name   = str
 
 
-    def binop(self, op, left, right): 
+    def binop(self, op, left, right):
         op = Symbol(op)
         return list(tuple((op, left, right)))
 
@@ -25,7 +25,7 @@ class LispTransformer(InlineTransformer):
 
     def list(self, *args):
         return list(args)
-       
+
     def letop(self, letop):
         print('LETOP: ', letop)
         return letop
@@ -35,10 +35,11 @@ class LispTransformer(InlineTransformer):
         return Symbol(symbol)
 
     def let(self, defines, ops):
-        print('%%%%%%% ', defines, ops)
         return list(tuple((Symbol.LET, defines, ops)))
 
-
+    def lambdas(self, args, func):
+        print('%%%%%%% ', args, func)
+        return list(tuple((Symbol.LAMBDA, args, func)))
 
 def parse(src: str):
     """
