@@ -17,14 +17,15 @@
 assign : atom "=" expr ->assign
 
 ?binop : SYMBOL atom atom -> binop
-			 | "[" atom SYMBOL atom "]" -> binop_alt
+			 | "[" list SYMBOL list "]" -> binop_alt
+			 | "[" list "(" atom ")" list "]" -> binop_alt2
        | SYMBOL atom      -> letop
 
 number : INT
        | FLOAT
 
 ?list  : atom
-       | "(" list* ")"->list
+       | "(" list* ")" -> list
 
 ?expr  : binop
        | list

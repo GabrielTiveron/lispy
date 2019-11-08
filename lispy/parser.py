@@ -15,10 +15,13 @@ class LispTransformer(InlineTransformer):
     def binop_alt(self, left, op, right):
         op = Symbol(op)
         return list(tuple((op, left, right)))
-    
+
+    def binop_alt2(self, left, op, right):
+        op = [op]
+        return list(tuple((op, left, right)))
+
     def let_alt(self, *args):
         *defines, ops = args
-        print('$$$$$$$$$ ', defines, ops)
         return list(tuple((Symbol.LET, defines, ops)))
 
     def assign(self, value, expr):
