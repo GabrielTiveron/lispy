@@ -24,11 +24,16 @@ class LispTransformer(InlineTransformer):
         return string[1:-1]
 
     def list(self, *args):
+        print('entrei aqui')
         return list(args)
 
-    def letop(self, letop):
-        print('LETOP: ', letop)
-        return letop
+    def condition(self, condition):
+        print('CONDIÇÃO: ', condition)
+        return list(tuple((Symbol.IF, condition)))
+
+    def quote(self, quote):
+        print('QUOTE: ', quote)
+        return list(tuple((Symbol.QUOTE, quote)))
 
     def symbol(self, symbol):
         print('$$$$$$$ ', symbol)

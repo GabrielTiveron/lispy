@@ -17,6 +17,12 @@ def eval(x, env):
 
     # Avalia tipos atômicos
     if isinstance(x, Symbol):
+        print('x dsadsaa: ', x)
+        if isinstance(x, list) and len(x) > 1:
+            l = []
+            for a in range(len(x)):
+                l.append(env[a])
+            return l
         return env[x]
     elif isinstance(x, (int, float, bool, str)):
         return x
@@ -65,7 +71,13 @@ def eval(x, env):
     # Comando (quote <expression>)
     # (quote (1 2 3))
     elif head == Symbol.QUOTE:
-        return NotImplemented
+        arg = args
+        if len(arg) == 1:
+            env[Symbol(arg[0])] = arg[0]
+            return eval(arg[0], env)
+        print('QUOTE: ', args)
+        env[Symbol(arg)] = eval(arg, env)
+        return eval(arg, env)
 
     # Comando (let <expression> <expression>)
     # (let ((x 1) (y 2)) (+ x y))

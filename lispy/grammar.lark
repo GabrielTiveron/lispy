@@ -6,6 +6,7 @@
 
 ?atom	 : value
        | number
+			 | "if"atom -> condition
 
 ?binop : SYMBOL atom atom -> binop
        | SYMBOL atom      -> letop
@@ -20,6 +21,7 @@ number : INT
        | list
        | "let""(" expr expr ")" -> let
        | "lambda""(" expr expr ")" -> lambdas
+			 | ("'"expr | "quote""(" expr ")") -> quote
 
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^&~<>?|\\\w=]+/
