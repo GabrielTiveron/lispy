@@ -80,7 +80,6 @@ def eval(x, env):
         else:
             if x[0] not in env:
                 eval([Symbol.DEFINE]+ x, dn)
-        env = ChainMap(env, dn)
         return eval(y, dn)
 
 
