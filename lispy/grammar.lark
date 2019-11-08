@@ -7,6 +7,11 @@
 ?atom	 : value
        | number
 			 | "if" expr expr expr -> condition
+			 | condition_alt2
+
+?condition_alt2 : ":if" expr "then:" expr condition_alt2* -> condition_alt
+							 | ":elif" expr "then:" expr condition_alt2*
+							 | ":else:" expr -> else_alt
 
 
 assign : atom "=" expr ->assign

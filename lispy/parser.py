@@ -39,6 +39,16 @@ class LispTransformer(InlineTransformer):
     def condition(self, test, then, other):
         return list(tuple((Symbol.IF, test, then, other)))
 
+    def condition_alt(self, test, then, alt):
+        return list(tuple((Symbol.IF, test, then, alt)))
+
+    def else_alt(self, arg):
+        return arg
+
+    def condition_alt2(self, *args):
+        x, y, k = args
+        return list(tuple((Symbol.IF, x, y, k)))
+
     def quote(self, quote):
         return list(tuple((Symbol.QUOTE, quote)))
 
