@@ -6,7 +6,7 @@
 
 ?atom	 : value
        | number
-			 | "if"atom -> condition
+			 | "if" expr expr expr -> condition
 
 ?binop : SYMBOL atom atom -> binop
        | SYMBOL atom      -> letop

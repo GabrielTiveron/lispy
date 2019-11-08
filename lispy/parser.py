@@ -27,9 +27,8 @@ class LispTransformer(InlineTransformer):
         print('entrei aqui')
         return list(args)
 
-    def condition(self, condition):
-        print('CONDIÇÃO: ', condition)
-        return list(tuple((Symbol.IF, condition)))
+    def condition(self, test, then, other):
+        return list(tuple((Symbol.IF, test, then, other)))
 
     def quote(self, quote):
         print('QUOTE: ', quote)

@@ -59,7 +59,8 @@ def eval(x, env):
     elif head == Symbol.IF:
         (_, test, then, alt) = x
         exp = (then if eval(test, env) else alt)
-        return eval(exp, env)
+        value = eval(exp, env)
+        return value
 
     # Comando (define <symbol> <expression>)
     # Ex: (define x (+ 40 2))
@@ -72,12 +73,18 @@ def eval(x, env):
     # (quote (1 2 3))
     elif head == Symbol.QUOTE:
         arg = args
-        if len(arg) == 1:
-            env[Symbol(arg[0])] = arg[0]
-            return eval(arg[0], env)
-        print('QUOTE: ', args)
-        env[Symbol(arg)] = eval(arg, env)
-        return eval(arg, env)
+        print('ARGUELO: ', arg[0])
+        l = []
+        if any(isinstance(a, list) for a in arg):
+            for i in arg[0]:
+                if isinstance(i,list):
+                    l.extend(i)
+                else: 
+                    l.append(i)
+        else:
+            env[Symbol(arg[0])] = Symbol(arg[0])
+            return arg[0]
+        return l
 
     # Comando (let <expression> <expression>)
     # (let ((x 1) (y 2)) (+ x y))
@@ -115,9 +122,11 @@ def eval(x, env):
     # Lista/chamada de funções
     # (sqrt 4)
     else:
-        proc = eval(head, env)
         args = (eval(arg, env) for arg in x[1:])
-        return proc(*args)
+        proc = eval(head, env)
+        if not isinstance(proc, float):
+            return proc(*args)
+        return proc
 
 
 #
