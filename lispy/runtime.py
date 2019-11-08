@@ -17,7 +17,6 @@ def eval(x, env):
 
     # Avalia tipos atômicos
     if isinstance(x, Symbol):
-        print('x dsadsaa: ', x)
         if isinstance(x, list) and len(x) > 1:
             l = []
             for a in range(len(x)):
@@ -65,7 +64,6 @@ def eval(x, env):
     # Comando (define <symbol> <expression>)
     # Ex: (define x (+ 40 2))
     elif head == Symbol.DEFINE:
-        print('DEFINE: ', x)
         (_, symbol, exp) = x
         env[symbol] = result = eval(exp, env)
 
@@ -73,13 +71,12 @@ def eval(x, env):
     # (quote (1 2 3))
     elif head == Symbol.QUOTE:
         arg = args
-        print('ARGUELO: ', arg[0])
         l = []
         if any(isinstance(a, list) for a in arg):
             for i in arg[0]:
                 if isinstance(i,list):
                     l.extend(i)
-                else: 
+                else:
                     l.append(i)
         else:
             env[Symbol(arg[0])] = Symbol(arg[0])
@@ -89,9 +86,7 @@ def eval(x, env):
     # Comando (let <expression> <expression>)
     # (let ((x 1) (y 2)) (+ x y))
     elif head == Symbol.LET:
-        print('ARGS: ', args)
         x, y = args
-        print('X: ', x, 'Y: ', y)
         dn = {}
         if any(isinstance(i, list) for i in x):
             for i in x:
@@ -109,7 +104,6 @@ def eval(x, env):
         if any(isinstance(i, float) for i in arg):
             raise TypeError
         d = {}
-        print('arg lambda: ', str(arg[0]))
         def fn(*p):
             p = list(p)
             for i in range(len(arg)):

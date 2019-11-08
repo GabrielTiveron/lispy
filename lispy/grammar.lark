@@ -9,6 +9,7 @@
 			 | "if" expr expr expr -> condition
 
 ?binop : SYMBOL atom atom -> binop
+			 | "[" atom SYMBOL atom "]" -> binop_alt
        | SYMBOL atom      -> letop
 
 number : INT
