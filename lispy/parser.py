@@ -5,8 +5,45 @@ from .runtime import Symbol
 
 
 class LispTransformer(InlineTransformer):
-    def start(self, *args): 
-        return [Symbol.BEGIN, *args]
+
+    number = float
+    name   = str
+
+
+    def binop(self, op, left, right):
+        op = Symbol(op)
+        return list(tuple((op, left, right)))
+
+    def bool(self, term):
+        return term == '#t'
+
+    def string(self, string):
+        string = string.replace('\\n', '\n')
+        string = string.replace('\\t', '\t')
+        string = string.replace('\\"', '\"')
+        return string[1:-1]
+
+    def list(self, *args):
+        print('entrei aqui')
+        return list(args)
+
+    def condition(self, test, then, other):
+        return list(tuple((Symbol.IF, test, then, other)))
+
+    def quote(self, quote):
+        print('QUOTE: ', quote)
+        return list(tuple((Symbol.QUOTE, quote)))
+
+    def symbol(self, symbol):
+        print('$$$$$$$ ', symbol)
+        return Symbol(symbol)
+
+    def let(self, defines, ops):
+        return list(tuple((Symbol.LET, defines, ops)))
+
+    def lambdas(self, args, func):
+        print('%%%%%%% ', args, func)
+        return list(tuple((Symbol.LAMBDA, args, func)))
 
 def parse(src: str):
     """

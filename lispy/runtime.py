@@ -6,53 +6,127 @@ from types import MappingProxyType
 from .symbol import Symbol
 
 
-def eval(x, env=None):
+def eval(x, env):
     """
     Avalia expressão no ambiente de execução dado.
     """
-    
+
     # Cria ambiente padrão, caso o usuário não passe o argumento opcional "env"
     if env is None:
         env = ChainMap({}, global_env)
-    
+
     # Avalia tipos atômicos
     if isinstance(x, Symbol):
-        return NotImplemented
+        print('x dsadsaa: ', x)
+        if isinstance(x, list) and len(x) > 1:
+            l = []
+            for a in range(len(x)):
+                l.append(env[a])
+            return l
+        return env[x]
     elif isinstance(x, (int, float, bool, str)):
-        return NotImplemented
+        return x
 
     # Avalia formas especiais e listas
     head, *args = x
-    
+
+    # Comando (+ <expression> <expression>)
+    # Ex: (+ 2 2)
+    if head == Symbol.ADD:
+        x,y = args
+        return eval(x, env) + eval(y, env)
+
+    # Comando (- <expression> <expression>)
+    # Ex: (- 2 2)
+    elif head == Symbol.SUB:
+        x,y = args
+        return eval(x, env) - eval(y, env)
+
+    # Comando (* <expression> <expression>)
+    # Ex: (* 2 2)
+    elif head == Symbol.MUL:
+        x,y = args
+        return eval(x, env) * eval(y, env)
+
+    # Comando (/ <expression> <expression>)
+    # Ex: (/ 2 2)
+    elif head == Symbol.DIV:
+        x,y = args
+        return eval(x, env) / eval(y, env)
+
     # Comando (if <test> <then> <other>)
     # Ex: (if (even? x) (quotient x 2) x)
-    if head == Symbol.IF:
-        return NotImplemented
+    elif head == Symbol.IF:
+        (_, test, then, alt) = x
+        exp = (then if eval(test, env) else alt)
+        value = eval(exp, env)
+        return value
 
     # Comando (define <symbol> <expression>)
     # Ex: (define x (+ 40 2))
     elif head == Symbol.DEFINE:
-        return NotImplemented
+        print('DEFINE: ', x)
+        (_, symbol, exp) = x
+        env[symbol] = result = eval(exp, env)
 
     # Comando (quote <expression>)
     # (quote (1 2 3))
     elif head == Symbol.QUOTE:
-        return NotImplemented
+        arg = args
+        print('ARGUELO: ', arg[0])
+        l = []
+        if any(isinstance(a, list) for a in arg):
+            for i in arg[0]:
+                if isinstance(i,list):
+                    l.extend(i)
+                else: 
+                    l.append(i)
+        else:
+            env[Symbol(arg[0])] = Symbol(arg[0])
+            return arg[0]
+        return l
 
     # Comando (let <expression> <expression>)
     # (let ((x 1) (y 2)) (+ x y))
     elif head == Symbol.LET:
-        return NotImplemented
+        print('ARGS: ', args)
+        x, y = args
+        print('X: ', x, 'Y: ', y)
+        dn = {}
+        if any(isinstance(i, list) for i in x):
+            for i in x:
+                eval([Symbol.DEFINE] + i, dn)
+        else:
+            if x[0] not in env:
+                eval([Symbol.DEFINE]+ x, dn)
+        return eval(y, dn)
+
 
     # Comando (lambda <vars> <body>)
     # (lambda (x) (+ x 1))
     elif head == Symbol.LAMBDA:
-        return NotImplemented
+        arg, body = args
+        if any(isinstance(i, float) for i in arg):
+            raise TypeError
+        d = {}
+        print('arg lambda: ', str(arg[0]))
+        def fn(*p):
+            p = list(p)
+            for i in range(len(arg)):
+                d[Symbol(arg[i])] = p[i]
+            value = eval(body, d)
+            return value
+        env = ChainMap(env, d)
+        return fn
 
     # Lista/chamada de funções
     # (sqrt 4)
     else:
-       return NotImplemented
+        args = (eval(arg, env) for arg in x[1:])
+        proc = eval(head, env)
+        if not isinstance(proc, float):
+            return proc(*args)
+        return proc
 
 
 #
@@ -69,11 +143,11 @@ def env(*args, **kwargs):
     Ambiente padrão
     >>> env()
     {...}
-        
+
     Acrescenta algumas variáveis explicitamente
     >>> env(x=1, y=2)
     {x: 1, y: 2, ...}
-        
+
     Passa um dicionário com variáveis adicionais
     >>> d = {Symbol('x'): 1, Symbol('y'): 2}
     >>> env(d)
@@ -99,28 +173,28 @@ def _make_global_env():
 
     dic = {
         **vars(math), # sin, cos, sqrt, pi, ...
-        '+':op.add, '-':op.sub, '*':op.mul, '/':op.truediv, 
-        '>':op.gt, '<':op.lt, '>=':op.ge, '<=':op.le, '=':op.eq, 
+        '+':op.add, '-':op.sub, '*':op.mul, '/':op.truediv,
+        '>':op.gt, '<':op.lt, '>=':op.ge, '<=':op.le, '=':op.eq,
         'abs':     abs,
-        'append':  op.add,  
+        'append':  op.add,
         'apply':   lambda proc, args: proc(*args),
         'begin':   lambda *x: x[-1],
         'car':     lambda x: head,
-        'cdr':     lambda x: x[1:], 
+        'cdr':     lambda x: x[1:],
         'cons':    lambda x,y: [x] + y,
-        'eq?':     op.is_, 
+        'eq?':     op.is_,
         'expt':    pow,
         'equal?':  op.eq,
         'even?':   lambda x: x % 2 == 0,
-        'length':  len, 
-        'list':    lambda *x: list(x), 
-        'list?':   lambda x: isinstance(x, list), 
+        'length':  len,
+        'list':    lambda *x: list(x),
+        'list?':   lambda x: isinstance(x, list),
         'map':     map,
         'max':     max,
         'min':     min,
         'not':     op.not_,
-        'null?':   lambda x: x == [], 
-        'number?': lambda x: isinstance(x, (float, int)),  
+        'null?':   lambda x: x == [],
+        'number?': lambda x: isinstance(x, (float, int)),
 		'odd?':   lambda x: x % 2 == 1,
         'print':   print,
         'procedure?': callable,
@@ -130,5 +204,4 @@ def _make_global_env():
     }
     return MappingProxyType({Symbol(k): v for k, v in dic.items()})
 
-global_env = _make_global_env() 
-
+global_env = _make_global_env()
