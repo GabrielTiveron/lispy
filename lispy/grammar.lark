@@ -8,6 +8,9 @@
        | number
 			 | "if" expr expr expr -> condition
 
+
+assign : atom "=" expr ->assign
+
 ?binop : SYMBOL atom atom -> binop
 			 | "[" atom SYMBOL atom "]" -> binop_alt
        | SYMBOL atom      -> letop
@@ -21,6 +24,7 @@ number : INT
 ?expr  : binop
        | list
        | "let""(" expr expr ")" -> let
+       | ":""let""{" assign+ "}" "in" "(" expr ")" -> let_alt
        | "lambda""(" expr expr ")" -> lambdas
 			 | ("'"expr | "quote""(" expr ")") -> quote
 

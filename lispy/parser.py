@@ -15,6 +15,14 @@ class LispTransformer(InlineTransformer):
     def binop_alt(self, left, op, right):
         op = Symbol(op)
         return list(tuple((op, left, right)))
+    
+    def let_alt(self, *args):
+        *defines, ops = args
+        print('$$$$$$$$$ ', defines, ops)
+        return list(tuple((Symbol.LET, defines, ops)))
+
+    def assign(self, value, expr):
+        return list(tuple((value, expr)))
 
     def bool(self, term):
         return term == '#t'
