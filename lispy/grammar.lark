@@ -1,13 +1,32 @@
-?start : value+
+?start : expr
 
-?value : SYMBOL
- 
+?value : SYMBOL -> symbol
+			 | STRING ->string
+       | BOOL -> bool
+
+?atom	 : value
+       | number
+
+?binop : SYMBOL atom atom -> binop
+       | SYMBOL atom      -> letop
+
+number : INT
+       | FLOAT
+
+?list  : atom
+       | "(" list* ")"->list
+
+?expr  : binop
+       | list
+       | "let""(" expr expr ")" -> let
+       | "lambda""(" expr expr ")" -> lambdas
 
 // Terminais
 SYMBOL.0  : /[-!+\/*@$%^&~<>?|\\\w=]+/
-STRING    : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
+STRING.4    : /"[^"\\]*(\\[^\n\t\r\f][^"\\]*)*"/
 INT.1     : /-?\d+/
 FLOAT.2   : /-?\d+\.\d+/
+BOOL.3	    : /#[tf]/
 
 %ignore /\s+/
 %ignore /;[^\n]*/
