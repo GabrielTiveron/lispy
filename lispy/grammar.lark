@@ -1,4 +1,4 @@
-?start : expr
+?start : expr+
 
 ?value : SYMBOL -> symbol
 			 | STRING ->string
@@ -35,7 +35,7 @@ number : INT
 			 | ("'"expr | "quote""(" expr ")") -> quote
        | lambda_alt
 
-?lambda_alt : ":defn" SYMBOL SYMBOL+ ":" "(" expr ")" -> lambda_alt
+?lambda_alt : ":defn" SYMBOL SYMBOL+ ":"  expr -> lambda_alt
             | ":fn" SYMBOL+ ":" "(" expr ")" -> lambda_alt2
 
 // Terminais
@@ -47,4 +47,3 @@ BOOL.3	    : /#[tf]/
 
 %ignore /\s+/
 %ignore /;[^\n]*/
-%ignore /[\n]+/

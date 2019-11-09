@@ -29,11 +29,18 @@ def eval(x, env):
     # Avalia formas especiais e listas
     head, *args = x
 
+    if head == Symbol.BEGIN:
+        print('args ', args)
+
     # Comando (+ <expression> <expression>)
     # Ex: (+ 2 2)
     if head == Symbol.ADD:
         x,y = args
         return eval(x, env) + eval(y, env)
+
+    if head == Symbol('<='):
+      x, y = args
+      return eval(x, env) <= eval(y, env)
 
     # Comando (- <expression> <expression>)
     # Ex: (- 2 2)
@@ -57,6 +64,7 @@ def eval(x, env):
     # Ex: (if (even? x) (quotient x 2) x)
     elif head == Symbol.IF:
         (_, test, then, alt) = x
+        print('test then alt: ', test, then, alt)
         exp = (then if eval(test, env) else alt)
         value = eval(exp, env)
         return value
@@ -65,7 +73,7 @@ def eval(x, env):
     # Ex: (define x (+ 40 2))
     elif head == Symbol.DEFINE:
         (_, symbol, exp) = x
-        env[symbol] = result = eval(exp, env)
+        env[symbol] = eval(exp, env)
 
     # Comando (quote <expression>)
     # (quote (1 2 3))
@@ -87,20 +95,22 @@ def eval(x, env):
     # (let ((x 1) (y 2)) (+ x y))
     elif head == Symbol.LET:
         x, y = args
+        print('LETLETLET:  ', x, y)
         dn = {}
         if any(isinstance(i, list) for i in x):
             for i in x:
-                eval([Symbol.DEFINE] + i, dn)
+                eval([Symbol.DEFINE] + i, ChainMap(dn, env))
         else:
             if x[0] not in env:
-                eval([Symbol.DEFINE]+ x, dn)
-        return eval(y, dn)
+                eval([Symbol.DEFINE]+ x, ChainMap(dn, env))
+        return eval(y, ChainMap(dn, env))
 
 
     # Comando (lambda <vars> <body>)
     # (lambda (x) (+ x 1))
     elif head == Symbol.LAMBDA:
         arg, body = args
+        print('LAMBDA LAMBDA LABDA: ', arg, body)
         if any(isinstance(i, float) for i in arg):
             raise TypeError
         d = {}
@@ -108,7 +118,7 @@ def eval(x, env):
             p = list(p)
             for i in range(len(arg)):
                 d[Symbol(arg[i])] = p[i]
-            value = eval(body, d)
+            value = eval(body, ChainMap(d, env))
             return value
         env = ChainMap(env, d)
         return fn
@@ -118,7 +128,9 @@ def eval(x, env):
     else:
         args = (eval(arg, env) for arg in x[1:])
         proc = eval(head, env)
-        if not isinstance(proc, float):
+        print('proc: ', proc)
+        print('args: ', x)
+        if callable(proc):
             return proc(*args)
         return proc
 

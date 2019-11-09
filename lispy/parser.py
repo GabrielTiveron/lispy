@@ -8,15 +8,23 @@ class LispTransformer(InlineTransformer):
     number = float
     name   = str
 
+    def start(self, *args):
+        print('aASDAAAAAAAAAAAAAAAA')
+        return [Symbol.BEGIN]+list(args)
+
     def binop(self, op, left, right):
+        print('BIONOPEI: ', op, left, right)
         op = Symbol(op)
         return list(tuple((op, left, right)))
 
     def binop_alt(self, left, op, right):
+        print('BIONOPEIALT: ', op, left, right)
+        
         op = Symbol(op)
         return list(tuple((op, left, right)))
 
     def binop_alt2(self, left, op, right):
+        print('BIONOPEI alt2: ', op, left, right)
         op = [op]
         return list(tuple((op, left, right)))
 
